@@ -11,6 +11,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -23,12 +24,12 @@ public class JavaConfig extends WebMvcConfigurerAdapter {
 
 	@Autowired
 	Environment env;
-	
+
 	@Override
 	public void configureViewResolvers(ViewResolverRegistry registry) {
 		registry.jsp("/WEB-INF/views/", ".jsp");
 	}
-	
+
 	@Bean
 	public JavaMailSender mailSender() {
 		JavaMailSenderImpl mailSenderImpl = new JavaMailSenderImpl();
@@ -36,7 +37,7 @@ public class JavaConfig extends WebMvcConfigurerAdapter {
 		mailSenderImpl.setPort(Integer.parseInt(env.getProperty("port")));
 		mailSenderImpl.setUsername(env.getProperty("email"));
 		mailSenderImpl.setPassword(env.getProperty("password"));
-		
+
 		Properties props = mailSenderImpl.getJavaMailProperties();
 		props.put("mail.transport.protocol", "smtp");
 		props.put("mail.smtp.auth", "true");
@@ -44,4 +45,10 @@ public class JavaConfig extends WebMvcConfigurerAdapter {
 		props.put("mail.debug", "true");
 		return mailSenderImpl;
 	}
+
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/resources/**").addResourceLocations("/resources/");
+	}
+
 }
